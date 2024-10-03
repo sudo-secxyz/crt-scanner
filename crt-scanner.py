@@ -24,7 +24,7 @@ class FileHandle:
         """write to file."""
         if not os.path.exists(dname):
             os.mkdir(dname)
-        with open(f'{dname}/{fname}','w', encoding="utf-8") as file:
+        with open(f'{dname}/{fname}.output','w', encoding="utf-8") as file:
             file.write(data)
             file.close()
 
@@ -36,6 +36,8 @@ def get_data():
     r = requests.get(url, timeout=25)
     response = r.json()
     output = json.dumps(response)
+    print('---------------------------\n')
+    print(f' + Discovering domains for {dname} \n')
     FileHandle.write_file(fname=f'{dname}-output.json',data = output)
     for each in response:
         domain_name=each['common_name']
@@ -60,9 +62,11 @@ def check_url():
             pass
         if resp == 200:
             call_data= r.text
+            print(f'+ Domain discovered: {d} \n')
             FileHandle.write_file(d, call_data)
+            
         else:
             FileHandle.write_file(d, str(resp))
-    print(f"found [{count}]: urls, valable at /{dname}")
+    print(f"+ Found [{count}]: urls, valable at /{dname}")
 
 check_url()
