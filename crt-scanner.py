@@ -20,11 +20,15 @@ class FileHandle:
     def __init__(self, fname, data) -> None:
         self.fname = fname
         self.data = data
+        
     def write_file(fname, data):
         """write to file."""
+        subfolder = f'{dname}/{fname}'
         if not os.path.exists(dname):
             os.mkdir(dname)
-        with open(f'{dname}/{fname}.output','w', encoding="utf-8") as file:
+        if not os.path.exists(subfolder):
+            os.mkdir(subfolder)
+        with open(f'{subfolder}/{fname}.output','w', encoding="utf-8") as file:
             file.write(data)
             file.close()
 
