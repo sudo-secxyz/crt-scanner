@@ -4,6 +4,7 @@ from time import sleep
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import selenium
+import urllib3
 import sys
 import json
 import os
@@ -65,7 +66,7 @@ def check_url():
 
     for d in domain_list:
         count +=1
-        url = "http://"+d
+        url = "https://"+d
         subdir = f"{dname}/{d}"
         try:
             r = requests.get(url, timeout=25)
@@ -84,7 +85,7 @@ def check_url():
                     print(f'+ capturing screenshot of {d}')
                     driver.get_screenshot_as_file(f'{subdir}/{d}.png')
                     driver.quit()
-                except (ConnectionError, ConnectionRefusedError) as e:
+                except (ConnectionError, ConnectionRefusedError, urllib3.exceptions.MaxRetryError ) as e:
                     pass
         else:
             FileHandle.write_file(d, str(resp))
