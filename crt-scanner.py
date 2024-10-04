@@ -1,13 +1,21 @@
 import requests
 import argparse
 from time import sleep
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+import selenium
 import sys
 import json
 import os
 
+
+#open google chrome with selenium
+
+options = Options()
+options.add_argument('--headless')
+driver = webdriver.Chrome(options=options)
 BASE_URL = "https://crt.sh/?q={}&output=json&opt=excludeExpired"
 
-   
 parser = argparse.ArgumentParser(epilog='\tExample: \r\npython3 ' + sys.argv[0] + " -d google.com")
 parser._optionals.title = "OPTIONS"
 parser.add_argument('-d', '--domain', type=str, help='Specify Target Domain to get subdomains from crt.sh', required=True)
@@ -28,7 +36,7 @@ class FileHandle:
             os.mkdir(dname)
         if not os.path.exists(subfolder):
             os.mkdir(subfolder)
-        with open(f'{subfolder}/{fname}.output','w', encoding="utf-8") as file:
+        with open(f'{subfolder}/{fname}','w', encoding="utf-8") as file:
             file.write(data)
             file.close()
 
@@ -42,7 +50,7 @@ def get_data():
     output = json.dumps(response)
     print('---------------------------\n')
     print(f' + Discovering domains for {dname} \n')
-    FileHandle.write_file(fname=f'{dname}-output.json',data = output)
+    FileHandle.write_file(fname=f'crt-results-for-{dname}.json',data = output)
     for each in response:
         domain_name=each['common_name']
         url_list.append(domain_name)
@@ -58,6 +66,7 @@ def check_url():
     for d in domain_list:
         count +=1
         url = "http://"+d
+        subdir = f"{dname}/{d}"
         try:
             r = requests.get(url, timeout=25)
             sleep(.5)
@@ -68,9 +77,17 @@ def check_url():
             call_data= r.text
             print(f'+ Domain discovered: {d} \n')
             FileHandle.write_file(d, call_data)
-            
+            if not os.path.exists(f'{subdir}/{d}.png'):
+                try:
+                    driver.get(url)
+                    sleep(3)
+                    print(f'+ capturing screenshot of {d}')
+                    driver.get_screenshot_as_file(f'{subdir}/{d}.png')
+                    driver.quit()
+                except ConnectionError:
+                    pass
         else:
             FileHandle.write_file(d, str(resp))
-    print(f"+ Found [{count}]: urls, valable at /{dname}")
+    print(f"+ Found [{count}]: urls, available at /{dname}")
 
 check_url()
