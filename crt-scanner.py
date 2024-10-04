@@ -84,7 +84,7 @@ def check_url():
                     print(f'+ capturing screenshot of {d}')
                     driver.get_screenshot_as_file(f'{subdir}/{d}.png')
                     driver.quit()
-                except ConnectionError:
+                except (ConnectionError, ConnectionRefusedError) as e:
                     pass
         else:
             FileHandle.write_file(d, str(resp))
