@@ -15,8 +15,10 @@ import os
 
 options = Options()
 options.add_argument("--headless")
+options.add_argument("--incognito")
 driver = webdriver.Chrome(options=options)
 BASE_URL = "https://crt.sh/?q={}&output=json&opt=excludeExpired"
+headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"}
 
 parser = argparse.ArgumentParser(
     epilog="\tExample: \r\npython3 " + sys.argv[0] + " -d google.com"
@@ -57,7 +59,7 @@ def get_data():
     """get json output from crt.sh and output to file named [domain]-output.json"""
     url_list = []
     url = BASE_URL.format(str(dname))
-    r = requests.get(url, timeout=25)
+    r = requests.get(url, headers=headers, timeout=25)
     response = r.json()
     output = json.dumps(response)
     print("---------------------------\n")
@@ -85,7 +87,7 @@ def check_url():
         header_data = HeaderCheck.get_headers.scan_it([url])
         resp = ""
         try:
-            r = requests.get(url, timeout=25)
+            r = requests.get(url, headers=headers, timeout=25)
             sleep(0.5)
             resp = r.status_code
         except requests.exceptions.ConnectionError:
@@ -97,9 +99,14 @@ def check_url():
 
             try:
                 driver.get(url)
-                sleep(4)
+                sleep(3)
                 print(f"+ capturing screenshot of {d}")
-                driver.get_screenshot_as_file(f"{subdir}/{d}.png")
+                driver.save_screenshot(f"{subdir}/{d}.png")
+                with open(
+                    f"{subdir}/{d}-header-data.txt", "w", encoding="utf-8"
+                ) as file:
+                    file.write(str(header_data))
+                    file.close()
                 sleep(1)
             except (
                 ConnectionError,
@@ -112,12 +119,7 @@ def check_url():
                 with open(f"{dname}/errorlog.log", "w", encoding="utf-8") as f:
                     f.write(str(e))
             finally:
-                with open(
-                    f"{subdir}/{d}-header-data.txt", "w", encoding="utf-8"
-                ) as file:
-                    file.write(str(header_data))
-                    file.close()
-                driver.quit()
+                
                 r.close()
         else:
             FileHandle.write_file(d, str(resp))
