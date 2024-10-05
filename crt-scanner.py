@@ -72,8 +72,9 @@ def check_url():
 
     for d in domain_list:
         count +=1
-        url = "http://"+d
+        url = "https://"+d
         subdir = f"{dname}/{d}"
+        header_data=HeaderCheck.get_headers.scan_it([url])
         resp =""
         try:
             r = requests.get(url, timeout=25)
@@ -95,23 +96,15 @@ def check_url():
             except (ConnectionError, ConnectionRefusedError, urllib3.exceptions.MaxRetryError ) as e:
                 pass
             finally:
+                with open(f'{subdir}/{d}-header-data.txt', 'w') as file:
+                    file.write(str(header_data))
+                    file.close()
+                
                 r.close()
         else:
             FileHandle.write_file(d, str(resp))
     print(f"+ Found [{count}]: urls, available at /{dname}")
 
-def check_header():
-    '''Function to check header data.'''
-    domainlist=get_data()
-    for url in domainlist:
-        filename=f"{url}-header-data.txt"
-        header_data=HeaderCheck.get_headers.scan_it([url])
-        with open(f'{dname}/{url}/{filename}', 'w') as file:
-            file.write(str(header_data))
-            file.close()
-    return header_data
-
-
 
 check_url()
-check_header()
+

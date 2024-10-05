@@ -17,7 +17,7 @@ for more information on how to do that [Google](https://developer.chrome.com/doc
 
 `Usage: python3 crt-scanner.py -d <URL to scan>`
 
-![alt text](image-1.png)
+![example run](image.png)
 ---
 ### Logging
 Tool will create a directory using the name of the url given, and then create files corresponding to the discovered urls based on crt.sh common names

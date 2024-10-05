@@ -13,7 +13,6 @@ class get_headers():
         urls = target
         for url in urls:
             url = url.strip()
-            url = f"https://{url}"
             print(f'+ gathering header data for {url}')
             try:
                 req = requests.get(url, headers=headers)
