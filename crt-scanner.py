@@ -3,6 +3,7 @@ import argparse
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from utilities import HeaderCheck
 import selenium
 import urllib3
 import sys
@@ -23,6 +24,7 @@ parser.add_argument('-d', '--domain', type=str, help='Specify Target Domain to g
 query =  parser.parse_args()
 dname = query.domain
 cname = 'common_name'
+
 
 class FileHandle:
     ''' class for the file handling of the script. '''
@@ -98,4 +100,18 @@ def check_url():
             FileHandle.write_file(d, str(resp))
     print(f"+ Found [{count}]: urls, available at /{dname}")
 
+def check_header():
+    domainlist=get_data()
+    for url in domainlist:
+        filename=f"{url}-header-data.txt"
+        header_data=HeaderCheck.get_headers.scan_it([url])
+        print(header_data)
+        with open(f'{dname}/{url}/{filename}', 'w') as file:
+            file.write(str(header_data))
+            file.close()
+    return header_data
+
+
+
 check_url()
+check_header()
