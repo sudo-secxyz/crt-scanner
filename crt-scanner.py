@@ -54,7 +54,10 @@ def get_data():
     FileHandle.write_file(fname=f'crt-results-for-{dname}.json',data = output)
     for each in response:
         domain_name=each['common_name']
-        url_list.append(domain_name)
+        print(f'+ common name found: {domain_name}')
+        if domain_name not in url_list:
+            if "*" not in domain_name:
+                url_list.append(domain_name)
     return url_list
 
 
@@ -66,8 +69,9 @@ def check_url():
 
     for d in domain_list:
         count +=1
-        url = "https://"+d
+        url = "http://"+d
         subdir = f"{dname}/{d}"
+        resp =""
         try:
             r = requests.get(url, timeout=25)
             sleep(.5)
@@ -78,15 +82,17 @@ def check_url():
             call_data= r.text
             print(f'+ Domain discovered: {d} \n')
             FileHandle.write_file(d, call_data)
-            if not os.path.exists(f'{subdir}/{d}.png'):
-                try:
-                    driver.get(url)
-                    sleep(3)
-                    print(f'+ capturing screenshot of {d}')
-                    driver.get_screenshot_as_file(f'{subdir}/{d}.png')
-                    driver.quit()
-                except (ConnectionError, ConnectionRefusedError, urllib3.exceptions.MaxRetryError ) as e:
-                    pass
+            
+            try:
+                driver.get(url)
+                sleep(3)
+                print(f'+ capturing screenshot of {d}')
+                driver.get_screenshot_as_file(f'{subdir}/{d}.png')
+                driver.quit()
+            except (ConnectionError, ConnectionRefusedError, urllib3.exceptions.MaxRetryError ) as e:
+                pass
+            finally:
+                r.close()
         else:
             FileHandle.write_file(d, str(resp))
     print(f"+ Found [{count}]: urls, available at /{dname}")
