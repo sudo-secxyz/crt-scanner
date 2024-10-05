@@ -1,0 +1,1 @@
+{'protection_xss': 'X-XSS-Protection not set, XSS May be Possible: ', 'options_content_type': 'X-Content-Type-Options not set', 'transport_security': ('Strict Transport in place', 'max-age=31536000'), 'content_security': ('Content-Security-Policy set:', 'upgrade-insecure-requests')}
