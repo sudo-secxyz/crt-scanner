@@ -82,27 +82,31 @@ def check_url():
             resp = r.status_code        
         except requests.exceptions.ConnectionError:
             pass
-        if resp == 200:
+        if str(20) in str(resp) or str(30) in str(resp):
             call_data= r.text
             print(f'+ Domain discovered: {d} \n')
             FileHandle.write_file(d, call_data)
             
             try:
                 driver.get(url)
-                sleep(3)
+                sleep(4)
                 print(f'+ capturing screenshot of {d}')
                 driver.get_screenshot_as_file(f'{subdir}/{d}.png')
-                driver.quit()
+                sleep(1)
             except (ConnectionError, ConnectionRefusedError, urllib3.exceptions.MaxRetryError ) as e:
-                pass
+                driver.quit()
+                sleep(1)
+                print(f"failed to capture {url}")
+                
             finally:
                 with open(f'{subdir}/{d}-header-data.txt', 'w') as file:
                     file.write(str(header_data))
                     file.close()
-                
+                driver.quit()
                 r.close()
         else:
             FileHandle.write_file(d, str(resp))
+            print('- Domain not accepting http requests.')
     print(f"+ Found [{count}]: urls, available at /{dname}")
 
 
