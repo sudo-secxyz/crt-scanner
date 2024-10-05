@@ -54,8 +54,9 @@ def get_data():
     FileHandle.write_file(fname=f'crt-results-for-{dname}.json',data = output)
     for each in response:
         domain_name=each['common_name']
-        print(f'+ common name found: {domain_name}')
+        
         if domain_name not in url_list:
+            print(f'+ common name found: {domain_name}')
             if "*" not in domain_name:
                 url_list.append(domain_name)
     return url_list
