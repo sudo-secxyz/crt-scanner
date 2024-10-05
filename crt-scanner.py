@@ -110,7 +110,7 @@ def check_url():
                 sleep(1)
                 print(f"failed to capture {url}")
                 with open(f"{dname}/errorlog.log", "w", encoding="utf-8") as f:
-                    f.write(e)
+                    f.write(str(e))
             finally:
                 with open(
                     f"{subdir}/{d}-header-data.txt", "w", encoding="utf-8"
