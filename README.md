@@ -15,7 +15,7 @@ in the command prompt or powershell.
 for more information on how to do that [Google](https://developer.chrome.com/docs/chromedriver/get-started/) has a guide.
 ---
 
-`Usage: python3 crt-scanner.py -d <URL to scan>`
+```Usage: python3 crt-scanner.py -d [URL to scan] -x[SubDomain to exclude(optional)] -l [file containing list of subdomains to exclude(optional)]```
 
 ![example run](image.png)
 ---
